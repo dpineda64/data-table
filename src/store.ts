@@ -2,6 +2,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import orderBy from 'lodash-es/orderBy';
+import range from 'lodash-es/range';
 import { DateTime } from 'luxon';
 
 Vue.use(Vuex);
@@ -18,7 +19,7 @@ function key(value: string): any {
 }
 
 function numberRange(to: number, perPage: number): number[] {
-  return [...Array(Math.round(to / perPage)).keys()];
+  return range(1, 1 + (Math.floor(to / perPage)));
 }
 
 function paginateData(data: any, page: number, perPage: number) {
@@ -54,7 +55,6 @@ export default new Vuex.Store<AppState>({
       state.data.records = records;
     },
     loadPage(state: AppState, page: number) {
-      console.log(state.data.records);
       state.data = {
         ...state.data,
         page,
@@ -82,10 +82,9 @@ export default new Vuex.Store<AppState>({
   actions: {
     async requestTableData({ commit }, page: number) {
       try {
-        let result: any = await fetch(process.env.API_URL!);
+        let result: any = await fetch(process.env.VUE_APP_API_URL!);
         result = await result.json();
         result.pages = numberRange(result.records.length, 10);
-        delete result.pages[0];
         commit('setTableData', result);
       } catch (e) {
         commit('error', e);

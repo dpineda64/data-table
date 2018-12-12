@@ -31,7 +31,7 @@
         </tbody>
       </table>
     </div>
-    <slot name="pagination"  />
+    <slot name="pagination" :perPage="perPage" />
   </div>
 </template>
 <script lang="ts">
