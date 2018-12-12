@@ -84,7 +84,6 @@ export default class Home extends Vue {
   ]
 
   mounted() {
-    console.log(this.pages);
     this.$store.dispatch('requestTableData', 1);
   }
 

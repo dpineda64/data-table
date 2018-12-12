@@ -60,12 +60,6 @@ export default class DataTable extends Vue {
 
   perPage: number = 10;
 
-  mounted() {
-    const pageCount = Math.round(this.data.length / this.perPage);
-    console.log(pageCount, this.data);
-    // this.pages = [...Array(Math.round(this.data.length / this.perPage)).keys()];
-  }
-
   selectAll() {
     this.allSelected = !this.allSelected;
     if (this.allSelected) {
