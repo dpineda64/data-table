@@ -1,0 +1,84 @@
+$color-white: #fff;
+$color-dark-grey: #A1A6B4;
+$color-primary: $color-white;
+$color-secondary:#030472; //#026cff;
+$color-accent: #2a2a2a;
+$color-divider: lighten($color: $color-dark-grey, $amount: 25);
+
+$table-color-accent: lighten($color-accent, 25);
+
+.data-table {
+  text-align: left;
+  background-color: $color-white;
+  border: 1px solid $color-divider;
+  max-width: max-content;
+  box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
+  margin: 0 auto;
+  &__content {
+    overflow-x: auto;
+    thead > tr:first-child  > th{
+      border-top: 0;
+    }
+    tr {
+      th, td {
+        width: 1px;
+        white-space: nowrap;
+        padding: .5rem;
+        border-top: 1px solid $color-divider;
+      }
+    }
+    thead {
+      .data-table-sort {
+        vertical-align: middle;
+        i {
+          font-size: 15px;
+        }
+      }
+    }
+  }
+
+  &__pagination {
+    padding: 1rem;
+    border-top: 1px solid $color-divider;
+    text-align: center;
+    ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    li {
+      display: inline-block;
+      position: relative;
+      vertical-align: middle;
+      &::after {
+        content: "";
+        width: 0%;
+        height: 1px;
+        background-color: $color-secondary;
+        position: absolute;
+        right: 0;
+        transition: all .5s ease-out;
+      }
+      &.is-active {
+        &::after {
+          width: 100%;
+        }
+        a {
+          color: $color-secondary;
+        }
+      }
+      a {
+        text-decoration: none;
+        color: $table-color-accent;
+        padding: .5rem;
+        transition: all .5s ease-out;
+      }
+      button {
+        border: 0;
+        background: transparent;
+        cursor: pointer;
+        outline: none;
+      }
+    }
+  }
+}
