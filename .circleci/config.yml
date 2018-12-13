@@ -25,9 +25,9 @@ jobs:
       - run: yarn test:unit
       - run: yarn build
   deployment:
-  production:
-    branch: master
-    heroku:
-      appname: data-table-app
+    production:
+      branch: master
+      heroku:
+        appname: data-table-app
 
 
