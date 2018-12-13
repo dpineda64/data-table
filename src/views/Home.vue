@@ -4,7 +4,7 @@
       hello
     </div>
     <DataTable :headers="headers" :data="records" :sortBy="sortBy" :selectable="true">
-      <template slot-scope="{item, selectable, select, selected}">
+      <template slot="tableData" slot-scope="{item, selectable, select, selected}">
         <tr>
           <td v-if="selectable" class="select">
             <input
@@ -38,6 +38,7 @@
 import { Component, Vue } from 'vue-property-decorator';
 import DataTable from '@/components/DataTable.vue';
 import DataPagination from '@/components/DataPagination.vue';
+
 import { Getter } from 'vuex-class';
 
 @Component({
@@ -87,7 +88,7 @@ export default class Home extends Vue {
     this.$store.dispatch('requestTableData', 1);
   }
 
-  loadPage(page: number) {
+  loadPage(page: string) {
     this.$store.commit('loadPage', page);
   }
 

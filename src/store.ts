@@ -8,13 +8,13 @@ import { DateTime } from 'luxon';
 Vue.use(Vuex);
 
 function key(value: string): any {
-  return (o: DataRecord) => {
-    const Date = DateTime.fromISO(o[value]);
+  return (record: DataRecord) => {
+    const Date = DateTime.fromISO(record[value]);
     if (Date.isValid) {
-      return DateTime.fromISO(o[value]);
+      return DateTime.fromISO(record[value]);
     }
-    const asNumber = parseFloat(o[value]);
-    return Number.isNaN(asNumber) ? o[value] : asNumber;
+    const asNumber = parseFloat(record[value]);
+    return Number.isNaN(asNumber) ? record[value] : asNumber;
   };
 }
 
@@ -23,7 +23,7 @@ function numberRange(to: number, perPage: number): number[] {
 }
 
 function paginateData(data: any, page: number, perPage: number) {
-  return data.slice(page * perPage, (page + 1) * perPage);
+  return data.slice((page - 1) * perPage).slice(0, perPage);
 }
 
 export default new Vuex.Store<AppState>({
@@ -53,6 +53,7 @@ export default new Vuex.Store<AppState>({
       let { records } = state.data;
       records = orderBy(records, key(value), [(order) ? 'desc' : 'asc']);
       state.data.records = records;
+      state.data.paginated = paginateData(records, state.data.page, state.data.perPage);
     },
     loadPage(state: AppState, page: number) {
       state.data = {
@@ -64,7 +65,7 @@ export default new Vuex.Store<AppState>({
   },
   getters: {
     page(state: AppState) {
-      return state.data.active;
+      return state.data.page;
     },
     perPage(state: AppState) {
       return state.data.perPage;

@@ -8,9 +8,9 @@
             <th v-if="selectable">
               <input type="checkbox" @click="selectAll" />
             </th>
-            <th v-for="(header, index) in headers" :key="index">
+            <th class="data-table-header" v-for="(header, index) in headers" :key="index">
               <div class="data-table-sort">
-                {{ header.text }}
+                <span> {{ header.text }} </span>
                 <a href="#" v-if="header.sortable"  @click="sort(header.value)">
                   <i class="material-icons">
                     {{ (desc[header.value]) ? 'arrow_upward' : 'arrow_downward' }}
@@ -22,6 +22,7 @@
         </thead>
         <tbody>
           <slot
+            name="tableData"
             v-for="item in data"
             :item="item"
             :selectable="selectable"
