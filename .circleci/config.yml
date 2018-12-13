@@ -25,8 +25,8 @@ jobs:
       - run: yarn test:unit
       - run: yarn build
       - save_cache:
-        key: dt-dist-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
-        paths:
+          key: dt-dist-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
+          paths:
             - dist
   deploy:
     working_directory: ~/repo
