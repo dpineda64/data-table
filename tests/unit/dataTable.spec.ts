@@ -1,22 +1,19 @@
-import { shallowMount, Wrapper } from '@vue/test-utils';
+import { mount, shallowMount, Wrapper } from '@vue/test-utils';
 import DataTable from '@/components/DataTable.vue';
+import DataTableHeader from '@/components/DataTableHeader.vue';
 
-import { headers, data } from './data';
+import { columns, data } from './data';
 
 describe('@components/DataTable', () => {
   let wrapper: Wrapper<any>;
   beforeAll(() => {
     wrapper = shallowMount(DataTable, {
-      propsData: { headers }
+      propsData: { columns },
     });
   });
 
-  it('renders headers', () => {
-    const ths = wrapper.findAll('.data-table-header');
-    headers.map((header, index) => {
-      const hd = ths.at(index).find('.data-table-sort').find('span');
-      expect(hd.text()).toBe(header.text);
-    });
+  it('renders slot tableHeader fallback', () => {
+    expect(wrapper.find(DataTableHeader).exists()).toBeTruthy();
   })
   it('renders data', () => {
     const wrapper = shallowMount(DataTable, {
@@ -32,7 +29,7 @@ describe('@components/DataTable', () => {
           <td class="data-Amount"> {{ props.item.Amount }} </td> \
         </tr>'
       },
-      propsData: { headers, data },
+      propsData: { columns, data },
     });
     const tr = wrapper.findAll('.data-table__row');
     if (tr.exists()) {

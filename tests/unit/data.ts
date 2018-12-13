@@ -1,4 +1,4 @@
-export const headers: TableHeader[] = [
+export const columns: TableColumns[] = [
   {
     text: 'ID',
     value: 'ID',

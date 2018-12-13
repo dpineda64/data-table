@@ -10,7 +10,7 @@ const serveStatic = require('serve-static');
 // const csvData = fs.readFileSync();
 
 const api = express();
-const json = async () => csv().fromFile(path.resolve(__dirname, './public/data.csv'));
+const json = async () => csv().fromFile(path.resolve(__dirname, './data.csv'));
 
 api.use(cors());
 api.use(express.static(path.resolve(__dirname, 'dist')));

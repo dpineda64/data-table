@@ -1,6 +1,12 @@
-declare interface TableProps {}
+declare interface TablePagination {
+  activePage: number;
+  perPage: number;
+  pages: number[];
+  nextPage: (nextPage: number) => void;
+  prevPage: (prevPage: number) => void;
+}
 
-declare interface TableHeader {
+declare interface TableColumns {
   text: string;
   value: string;
   sortable?: boolean;
@@ -14,11 +20,6 @@ declare interface orderByParams {
 
 declare interface DataRecord {
   [key: string]: any;
-  ID: string;
-  Name: string;
-  Description: string;
-  Date: string;
-  Amount: string;
 }
 
 declare interface Data {

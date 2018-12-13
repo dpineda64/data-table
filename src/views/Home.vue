@@ -1,54 +1,34 @@
 <template>
   <div class="home content">
-    <div class="filters">
-      hello
-    </div>
-    <DataTable :headers="headers" :data="records" :sortBy="sortBy" :selectable="true">
-      <template slot="tableData" slot-scope="{item, selectable, select, selected}">
-        <tr>
-          <td v-if="selectable" class="select">
-            <input
-              type="checkbox"
-              :value="item.ID"
-              v-model="selected.selectedIds"
-              @click="select(item.ID)"
-            />
-          </td>
-          <td> {{ item.ID }} </td>
-          <td> {{ item.Name }} </td>
-          <td contenteditable="true"> {{ item.Description }} </td>
-          <td> {{ new Date(item.Date).toLocaleString('en-GB', { timeZone: 'UTC' }) }} </td>
-          <td> {{ item.Amount }} </td>
-        </tr>
-      </template>
-      <template slot="pagination">
-        <DataPagination
-          :active="page"
-          :nextPage="loadPage"
-          :prevPage="loadPage"
-          :pages="pages"
-          :perPage="perPage"
-        />
-      </template>
-    </DataTable>
+    <DataTable
+      :columns="headers"
+      :data="records"
+      :orderBy="orderBy"
+      :selectable="true"
+      :pagination="{
+        activePage,
+        perPage,
+        pages,
+        nextPage: loadPage,
+        prevPage: loadPage,
+      }"
+    />
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import DataTable from '@/components/DataTable.vue';
-import DataPagination from '@/components/DataPagination.vue';
 
 import { Getter } from 'vuex-class';
 
 @Component({
   components: {
     DataTable,
-    DataPagination,
   },
 })
 export default class Home extends Vue {
-  @Getter('page') page!: number;
+  @Getter('activePage') activePage!: number;
 
   @Getter('pages') pages!: number;
 
@@ -56,7 +36,7 @@ export default class Home extends Vue {
 
   @Getter('perPage') perPage!: number;
 
-  headers: TableHeader[] = [
+  headers: TableColumns[] = [
     {
       text: 'ID',
       value: 'ID',
@@ -92,7 +72,7 @@ export default class Home extends Vue {
     this.$store.commit('loadPage', page);
   }
 
-  sortBy(value: string, order: boolean) {
+  orderBy(value: string, order: string) {
     this.$store.commit('orderData', { value, order });
   }
 }

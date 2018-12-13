@@ -1,53 +1,92 @@
 <template>
   <div class="data-table">
-    <slot name="filters" />
+    <slot name="filters" >
+      hello
+    </slot>
     <div class="data-table__content">
       <table>
         <thead>
-          <tr>
-            <th v-if="selectable">
-              <input type="checkbox" @click="selectAll" />
-            </th>
-            <th class="data-table-header" v-for="(header, index) in headers" :key="index">
-              <div class="data-table-sort">
-                <span> {{ header.text }} </span>
-                <a href="#" v-if="header.sortable"  @click="sort(header.value)">
-                  <i class="material-icons">
-                    {{ (desc[header.value]) ? 'arrow_upward' : 'arrow_downward' }}
-                  </i>
-                </a>
-              </div>
-            </th>
-          </tr>
+          <slot name="tableHeader">
+            <DataTableHeader
+              :columns="columns"
+              :onSelectAll="selectAll"
+              :allSelected="allSelected"
+              :order="order"
+              :ordered="desc"
+              :isSelectable="selectable"
+            />
+          </slot>
         </thead>
         <tbody>
           <slot
             name="tableData"
             v-for="item in data"
             :item="item"
-            :selectable="selectable"
-            :select="select"
-            :selected={selectedIds}
-          />
+            :onSelect="select"
+            :isSelected={selectedIds}
+            :isSelectable="selectable"
+          >
+            <DataTableBody
+              :id="item.ID"
+              :record="item"
+              :onSelect="select"
+              :isSelectable="selectable"
+              :columns="columns"
+              :selectedIds="selectedIds"
+            />
+          </slot>
         </tbody>
       </table>
     </div>
-    <slot name="pagination" :perPage="perPage" />
+    <slot name="pagination" slot-scope="{pagination}" >
+      <DataTablePagination
+        v-if="pagination"
+        :active="pagination.activePage"
+        :nextPage="pagination.nextPage"
+        :prevPage="pagination.prevPage"
+        :pages="pagination.pages"
+        :perPage="pagination.perPage"
+      />
+    </slot>
   </div>
 </template>
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import {
+  Vue,
+  Component,
+  Prop,
+  Watch,
+} from 'vue-property-decorator';
+import DataTablePagination from './DataTablePagination.vue';
+import DataTableBody from './DataTableBody.vue';
+import DataTableHeader from './DataTableHeader.vue';
 
-
-@Component
+@Component({
+  components: {
+    DataTablePagination,
+    DataTableBody,
+    DataTableHeader,
+  },
+})
 export default class DataTable extends Vue {
-  @Prop({ required: true }) headers!: TableHeader[];
+  @Prop({ required: true }) columns!: TableColumns[];
 
-  @Prop() sortBy!: (value: string, order: boolean) => void;
+  @Prop() orderBy!: (values: string, order: string) => void;
 
   @Prop() selectable!: boolean;
 
   @Prop() data!: DataRecord[];
+
+  @Prop() pagination!: TablePagination;
+
+  @Watch('pagination.activePage')
+
+  onPageChange(newVal: number, oldPage: number) {
+    if (newVal !== oldPage) {
+      this.allSelected = false;
+      this.selectedIds = [];
+    }
+  }
 
   desc: any = {};
 
@@ -55,11 +94,7 @@ export default class DataTable extends Vue {
 
   allSelected: boolean = false;
 
-  pages: number[] = [];
-
-  activePage: number = 1;
-
-  perPage: number = 10;
+  sortingBy: string[] = [];
 
   selectAll() {
     this.allSelected = !this.allSelected;
@@ -80,11 +115,12 @@ export default class DataTable extends Vue {
     }
   }
 
-  sort(value: string) {
+  order(value: string) {
     this.desc = {
-      [value]: !this.desc[value],
+      ...this.desc,
+      [value]: (this.desc[value] === 'asc') ? 'desc' : 'asc',
     };
-    this.sortBy(value, this.desc[value]);
+    this.orderBy(value, this.desc[value]);
   }
 }
 </script>

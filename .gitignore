@@ -24,4 +24,4 @@ yarn-error.log*
 *.sw*
 .env
 
-public/data.csv
+data.csv

@@ -51,7 +51,7 @@ export default new Vuex.Store<AppState>({
     },
     orderData(state: AppState, { value, order }: orderByParams) {
       let { records } = state.data;
-      records = orderBy(records, key(value), [(order) ? 'desc' : 'asc']);
+      records = orderBy(records, key(value), order);
       state.data.records = records;
       state.data.paginated = paginateData(records, state.data.page, state.data.perPage);
     },
@@ -64,7 +64,7 @@ export default new Vuex.Store<AppState>({
     },
   },
   getters: {
-    page(state: AppState) {
+    activePage(state: AppState) {
       return state.data.page;
     },
     perPage(state: AppState) {

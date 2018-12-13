@@ -1,5 +1,5 @@
 import { shallowMount, Wrapper } from '@vue/test-utils';
-import DataPagination from '@/components/DataPagination.vue';
+import DataPagination from '@/components/DataTablePagination.vue';
 
 const pages: number[] = [...Array(Math.round(100 / 10)).keys()];
 let active = 1;
