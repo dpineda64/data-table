@@ -8,9 +8,9 @@
             <th v-if="selectable">
               <input type="checkbox" @click="selectAll" />
             </th>
-            <th v-for="(header, index) in headers" :key="index">
+            <th class="data-table-header" v-for="(header, index) in headers" :key="index">
               <div class="data-table-sort">
-                {{ header.text }}
+                <span> {{ header.text }} </span>
                 <a href="#" v-if="header.sortable"  @click="sort(header.value)">
                   <i class="material-icons">
                     {{ (desc[header.value]) ? 'arrow_upward' : 'arrow_downward' }}
@@ -22,6 +22,7 @@
         </thead>
         <tbody>
           <slot
+            name="tableData"
             v-for="item in data"
             :item="item"
             :selectable="selectable"
@@ -31,7 +32,7 @@
         </tbody>
       </table>
     </div>
-    <slot name="pagination"  />
+    <slot name="pagination" :perPage="perPage" />
   </div>
 </template>
 <script lang="ts">
@@ -59,12 +60,6 @@ export default class DataTable extends Vue {
   activePage: number = 1;
 
   perPage: number = 10;
-
-  mounted() {
-    const pageCount = Math.round(this.data.length / this.perPage);
-    console.log(pageCount, this.data);
-    // this.pages = [...Array(Math.round(this.data.length / this.perPage)).keys()];
-  }
 
   selectAll() {
     this.allSelected = !this.allSelected;

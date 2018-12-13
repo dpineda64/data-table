@@ -2,27 +2,28 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import orderBy from 'lodash-es/orderBy';
+import range from 'lodash-es/range';
 import { DateTime } from 'luxon';
 
 Vue.use(Vuex);
 
 function key(value: string): any {
-  return (o: DataRecord) => {
-    const Date = DateTime.fromISO(o[value]);
+  return (record: DataRecord) => {
+    const Date = DateTime.fromISO(record[value]);
     if (Date.isValid) {
-      return DateTime.fromISO(o[value]);
+      return DateTime.fromISO(record[value]);
     }
-    const asNumber = parseFloat(o[value]);
-    return Number.isNaN(asNumber) ? o[value] : asNumber;
+    const asNumber = parseFloat(record[value]);
+    return Number.isNaN(asNumber) ? record[value] : asNumber;
   };
 }
 
 function numberRange(to: number, perPage: number): number[] {
-  return [...Array(Math.round(to / perPage)).keys()];
+  return range(1, 1 + (Math.floor(to / perPage)));
 }
 
 function paginateData(data: any, page: number, perPage: number) {
-  return data.slice(page * perPage, (page + 1) * perPage);
+  return data.slice((page - 1) * perPage).slice(0, perPage);
 }
 
 export default new Vuex.Store<AppState>({
@@ -52,9 +53,9 @@ export default new Vuex.Store<AppState>({
       let { records } = state.data;
       records = orderBy(records, key(value), [(order) ? 'desc' : 'asc']);
       state.data.records = records;
+      state.data.paginated = paginateData(records, state.data.page, state.data.perPage);
     },
     loadPage(state: AppState, page: number) {
-      console.log(state.data.records);
       state.data = {
         ...state.data,
         page,
@@ -64,7 +65,7 @@ export default new Vuex.Store<AppState>({
   },
   getters: {
     page(state: AppState) {
-      return state.data.active;
+      return state.data.page;
     },
     perPage(state: AppState) {
       return state.data.perPage;
@@ -82,10 +83,9 @@ export default new Vuex.Store<AppState>({
   actions: {
     async requestTableData({ commit }, page: number) {
       try {
-        let result: any = await fetch(process.env.API_URL!);
+        let result: any = await fetch(process.env.VUE_APP_API_URL!);
         result = await result.json();
         result.pages = numberRange(result.records.length, 10);
-        delete result.pages[0];
         commit('setTableData', result);
       } catch (e) {
         commit('error', e);
