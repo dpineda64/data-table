@@ -1,5 +1,5 @@
-DataTable
-==================
+# Project Install
+--------------------
 [![CircleCI](https://circleci.com/gh/dpineda64/data-table.svg?style=svg)](https://circleci.com/gh/dpineda64/data-table)
 [![Heroku](https://heroku-badge.herokuapp.com/?app=heroku-badge&root=projects.html)](https://data-table-app.herokuapp.com/)
 

@@ -6,10 +6,11 @@ declare interface TablePagination {
   prevPage: (prevPage: number) => void;
 }
 
-declare interface TableColumns {
+declare interface TableColumn {
+  [key: string]: any;
   text: string;
   value: string;
-  sortable?: boolean;
+  orderable?: boolean;
   editable?: boolean;
 }
 
@@ -29,4 +30,15 @@ declare interface Data {
   page: number;
   perPage: number;
   pages: number[];
+}
+
+declare interface Filters {
+  [key: string]: any;
+}
+
+declare interface FilterRange {
+  start?: any;
+  end?: any;
+  error?: string;
+  changed?: boolean;
 }

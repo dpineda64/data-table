@@ -1,30 +1,16 @@
 /* eslint no-param-reassign: 0 */
+/* eslint no-shadow: 0 */
 import Vue from 'vue';
 import Vuex from 'vuex';
 import orderBy from 'lodash-es/orderBy';
-import range from 'lodash-es/range';
-import { DateTime } from 'luxon';
+import {
+  parseValue,
+  key,
+  numberRange,
+  paginateData,
+} from '@/utils';
 
 Vue.use(Vuex);
-
-function key(value: string): any {
-  return (record: DataRecord) => {
-    const Date = DateTime.fromISO(record[value]);
-    if (Date.isValid) {
-      return DateTime.fromISO(record[value]);
-    }
-    const asNumber = parseFloat(record[value]);
-    return Number.isNaN(asNumber) ? record[value] : asNumber;
-  };
-}
-
-function numberRange(to: number, perPage: number): number[] {
-  return range(1, 1 + (Math.floor(to / perPage)));
-}
-
-function paginateData(data: any, page: number, perPage: number) {
-  return data.slice((page - 1) * perPage).slice(0, perPage);
-}
 
 export default new Vuex.Store<AppState>({
   state: {
@@ -61,6 +47,32 @@ export default new Vuex.Store<AppState>({
         page,
         paginated: paginateData(state.data.records, page, state.data.perPage),
       };
+    },
+    searchBy(state: AppState, { by, text, range }: any) {
+      const { records } = state.data;
+      const filtered = records.filter((value: DataRecord) => {
+        if (range) {
+          return parseValue(value, by) > range.start && parseValue(value, by) < range.end;
+        }
+        return value[by].toLowerCase().includes(text.toLowerCase());
+      });
+      state.data = {
+        ...state.data,
+        pages: numberRange(filtered.length, state.data.perPage),
+        paginated: paginateData(filtered, 1, state.data.perPage),
+      };
+    },
+    clearFilters(state: AppState) {
+      state.data.pages = numberRange(state.data.records.length, 10);
+      state.data.paginated = paginateData(state.data.records, state.data.page, state.data.perPage);
+    },
+    update(state: AppState, data: any) {
+      const { records } = state.data;
+      const record = records.find((value: DataRecord) => value.ID === data.id);
+      if (record && record[data.property] !== data.newVal) {
+        const index = records.indexOf(record);
+        state.data.records[index] = { ...record, [data.property]: data.newVal };
+      }
     },
   },
   getters: {

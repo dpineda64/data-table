@@ -6,7 +6,7 @@
     <th class="data-table-header" v-for="(column, index) in columns" :key="index">
       <div class="data-table-sort">
         <span> {{ column.text }} </span>
-        <a href="#" v-if="column.sortable"  @click="order(column.value)">
+        <a href="#" v-if="column.orderable"  @click="orderData(column.value)">
           <i class="material-icons">
             {{ (ordered[column.value] === 'asc') ? 'arrow_upward' : 'arrow_downward' }}
           </i>
@@ -19,7 +19,7 @@
 import { Vue, Component, Prop } from 'vue-property-decorator';
 @Component
 export default class TableHeader extends Vue {
-  @Prop({ required: true }) columns!: TableColumns[];
+  @Prop({ required: true }) columns!: TableColumn[];
 
   @Prop() isSelectable!: boolean;
 
@@ -27,7 +27,7 @@ export default class TableHeader extends Vue {
 
   @Prop() allSelected!: boolean;
 
-  @Prop() order!: (value: string) => void;
+  @Prop() orderData!: (value: string) => void;
 
   @Prop() ordered!: any[];
 }

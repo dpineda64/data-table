@@ -5,12 +5,12 @@ const path = require('path');
 const csv = require('csvtojson');
 const express = require('express');
 const cors = require('cors');
-const serveStatic = require('serve-static');
+const luxon = require('luxon');
 
 // const csvData = fs.readFileSync();
 
 const api = express();
-const json = async () => csv().fromFile(path.resolve(__dirname, './data.csv'));
+const csvFile = async () => csv().fromFile(path.resolve(__dirname, './data.csv'));
 
 api.use(cors());
 api.use(express.static(path.resolve(__dirname, 'dist')));
@@ -18,7 +18,11 @@ api.use(express.static(path.resolve(__dirname, 'dist')));
 let data;
 
 async function start() {
-  data = await json();
+  data = await csvFile();
+  data = data.map((value) => {
+    const Date = luxon.DateTime.fromISO(value.Date).toHTTP();
+    return { ...value, Date };
+  });
   api.listen(process.env.API_PORT, () => console.log('Api running'));
 }
 

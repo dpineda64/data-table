@@ -1,8 +1,5 @@
 <template>
   <div class="data-table">
-    <slot name="filters" >
-      hello
-    </slot>
     <div class="data-table__content">
       <table>
         <thead>
@@ -11,7 +8,7 @@
               :columns="columns"
               :onSelectAll="selectAll"
               :allSelected="allSelected"
-              :order="order"
+              :orderData="orderData"
               :ordered="desc"
               :isSelectable="selectable"
             />
@@ -19,17 +16,18 @@
         </thead>
         <tbody>
           <slot
-            name="tableData"
-            v-for="item in data"
-            :item="item"
+            name="tableBody"
+            v-for="record in data"
+            :record="record"
             :onSelect="select"
             :isSelected={selectedIds}
             :isSelectable="selectable"
           >
             <DataTableBody
-              :id="item.ID"
-              :record="item"
+              :id="record.ID"
+              :record="record"
               :onSelect="select"
+              :onEdit="onEdit"
               :isSelectable="selectable"
               :columns="columns"
               :selectedIds="selectedIds"
@@ -69,15 +67,17 @@ import DataTableHeader from './DataTableHeader.vue';
   },
 })
 export default class DataTable extends Vue {
-  @Prop({ required: true }) columns!: TableColumns[];
+  @Prop({ required: true }) columns!: TableColumn[];
 
-  @Prop() orderBy!: (values: string, order: string) => void;
+  @Prop() orderBy!: (value: string, order: string) => void;
 
   @Prop() selectable!: boolean;
 
   @Prop() data!: DataRecord[];
 
   @Prop() pagination!: TablePagination;
+
+  @Prop() onEdit!: ({ newVal, property, id }: any) => void;
 
   @Watch('pagination.activePage')
 
@@ -88,7 +88,7 @@ export default class DataTable extends Vue {
     }
   }
 
-  desc: any = {};
+  desc: any = [];
 
   selectedIds: string[] = [];
 
@@ -115,7 +115,7 @@ export default class DataTable extends Vue {
     }
   }
 
-  order(value: string) {
+  orderData(value: string) {
     this.desc = {
       ...this.desc,
       [value]: (this.desc[value] === 'asc') ? 'desc' : 'asc',
@@ -124,6 +124,3 @@ export default class DataTable extends Vue {
   }
 }
 </script>
-<style lang="scss">
-@import "@/assets/dataTable.scss";
-</style>

@@ -1,4 +1,4 @@
-export const columns: TableColumns[] = [
+export const columns: TableColumn[] = [
   {
     text: 'ID',
     value: 'ID',

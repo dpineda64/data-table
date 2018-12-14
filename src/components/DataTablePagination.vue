@@ -20,7 +20,7 @@
         <button
           class="next-page"
           @click="nextPage(active + 1)"
-          :disabled="active === (pages.length - 1)"
+          :disabled="active === pages.length"
         >
           <i class="material-icons"> keyboard_arrow_right </i>
         </button>
