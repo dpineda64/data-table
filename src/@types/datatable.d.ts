@@ -25,6 +25,7 @@ declare interface DataRecord {
 
 declare interface Data {
   records: DataRecord[];
+  filteredRecords: DataRecord[];
   paginated: DataRecord[];
   active?: number;
   page: number;
@@ -39,6 +40,4 @@ declare interface Filters {
 declare interface FilterRange {
   start?: any;
   end?: any;
-  error?: string;
-  changed?: boolean;
 }

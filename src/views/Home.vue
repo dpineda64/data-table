@@ -19,18 +19,19 @@
           <button @click="clearFilters"> clear </button>
         </span>
       </div>
-      <div class="filter">
-        Filter between dates:
-        <br />
+      <div class="filter" data-label="Filter between dates">
         <input type="date" v-model="filters.dateRange.start">
-        to
         <input type="date" v-model="filters.dateRange.end">
         <span class="clear" v-if="hasRange(filters.dateRange)">
           <button @click="clearFilters"> clear </button>
         </span>
       </div>
-      <div class="filter">
-        hello
+      <div class="filter amounts" data-label="Filter between amount">
+        <input type="number" placeholder="From" v-model="filters.amountRange.start" />
+        <input type="number" placeholder="To" v-model="filters.amountRange.end" />
+        <span class="clear" v-if="hasRange(filters.amountRange)">
+          <button @click="clearFilters"> clear </button>
+        </span>
       </div>
     </div>
     <DataTable
@@ -64,7 +65,10 @@ function defaultFilters(): Filters {
     dateRange: {
       start: '',
       end: '',
-      error: undefined,
+    },
+    amountRange: {
+      start: '',
+      end: '',
     },
     amount: [],
     changed: false,
@@ -95,12 +99,21 @@ export default class Home extends Vue {
 
   @Watch('filters.dateRange', { deep: true })
 
-  onChangeDate(_: any, { start, end }: any) {
-    const startDate = DateTime.fromString(start, 'yyyy-dd-mm');
-    const endDate = DateTime.fromString(end, 'yyyy-dd-mm');
-    this.filters.changed = !this.filters.changed;
-    if (startDate.isValid && endDate.isValid && !this.filters.changed) {
+  onChangeDate(newVal: FilterRange, { start, end }: FilterRange) {
+    const startDate = DateTime.fromString(newVal.start, 'yyyy-dd-mm');
+    const endDate = DateTime.fromString(newVal.end, 'yyyy-dd-mm');
+    if (startDate.isValid && endDate.isValid) {
       this.$store.commit('searchBy', { by: 'Date', range: { start: startDate.toISODate(), end: endDate.toISODate() } });
+    }
+  }
+
+  @Watch('filters.amountRange', { deep: true })
+
+  onChangeAmount(newVal: FilterRange, { start, end }: FilterRange) {
+    const startNumber = parseFloat(newVal.start);
+    const endNumber = parseFloat(newVal.end);
+    if (!Number.isNaN(startNumber) && !Number.isNaN(endNumber) && !this.filters.changed) {
+      this.$store.commit('searchBy', { by: 'Amount', range: { start: startNumber, end: endNumber } });
     }
   }
 
@@ -113,7 +126,6 @@ export default class Home extends Vue {
       text: 'Name',
       value: 'Name',
       orderable: true,
-      editable: false,
     },
     {
       text: 'Description',

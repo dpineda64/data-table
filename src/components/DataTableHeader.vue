@@ -6,11 +6,11 @@
     <th class="data-table-header" v-for="(column, index) in columns" :key="index">
       <div class="data-table-sort">
         <span> {{ column.text }} </span>
-        <a href="#" v-if="column.orderable"  @click="orderData(column.value)">
+        <button v-if="column.orderable"  @click="orderData(column.value)">
           <i class="material-icons">
             {{ (ordered[column.value] === 'asc') ? 'arrow_upward' : 'arrow_downward' }}
           </i>
-        </a>
+        </button>
       </div>
     </th>
   </tr>
