@@ -1,11 +1,10 @@
 $color-white: #fff;
-$color-dark-grey: #A1A6B4;
-$color-primary: $color-white;
-$color-secondary:#030472; //#026cff;
-$color-accent: #2a2a2a;
-$color-divider: lighten($color: $color-dark-grey, $amount: 25);
+$table-color-background: $color-white;
+$table-color-primary: $color-white;
+$table-color-secondary:#030472;
+$table-color-divider: lighten($color: #A1A6B4, $amount: 25);
 
-$table-color-accent: lighten($color-accent, 25);
+$table-color-accent: lighten(#2a2a2a, 25);
 
 .data-table {
   max-width: 100%;
@@ -13,18 +12,22 @@ $table-color-accent: lighten($color-accent, 25);
   &__content {
     overflow-x: auto;
     text-align: left;
-    background-color: $color-white;
-    border: 1px solid $color-divider;
+    background-color: $table-color-background;
+    border: 1px solid $table-color-divider;
     box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
     thead > tr:first-child  > th{
       border-top: 0;
     }
     tr {
+      transition: background-color .3s ease-in-out;
       th, td {
         width: 1px;
         white-space: nowrap;
         padding: .8rem;
-        border-top: 1px solid $color-divider;
+        border-top: 1px solid $table-color-divider;
+      }
+      &:hover {
+        background-color: lighten($table-color-secondary, 75);
       }
     }
     thead {
@@ -45,7 +48,7 @@ $table-color-accent: lighten($color-accent, 25);
 
   &__pagination {
     padding: 1rem 0;
-    border-top: 1px solid $color-divider;
+    border-top: 1px solid $table-color-divider;
     text-align: center;
     ul {
       list-style: none;
@@ -60,7 +63,7 @@ $table-color-accent: lighten($color-accent, 25);
         content: "";
         width: 0%;
         height: 1px;
-        background-color: $color-secondary;
+        background-color: $table-color-secondary;
         position: absolute;
         right: 0;
         transition: all .5s ease-out;
@@ -70,7 +73,7 @@ $table-color-accent: lighten($color-accent, 25);
           width: 100%;
         }
         a {
-          color: $color-secondary;
+          color: $table-color-secondary;
         }
       }
       a {

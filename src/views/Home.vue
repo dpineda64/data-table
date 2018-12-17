@@ -47,7 +47,25 @@
         nextPage: loadPage,
         prevPage: loadPage,
       }"
-    />
+    >
+      <template slot="actions" slot-scope={selectedIds}>
+        <button
+          v-if="selectedIds.length > 0"
+          @click="exportData(selectedIds)"
+          class="btn floating primary bottom-right shadow-1dp"
+          title="Export Selected"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="icon"  width="24" height="24" viewBox="0 0 24 24">
+            <path
+              fill="#000000"
+              d="M6,2C4.89,2 4,2.9 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,
+              20V8L14,2M13,3.5L18.5,9H13M8.93,
+              12.22H16V19.29L13.88,17.17L11.05,20L8.22,17.17L11.05,14.35"
+            />
+          </svg>
+        </button>
+      </template>
+    </DataTable>
   </div>
 </template>
 
@@ -55,7 +73,7 @@
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import DataTable from '@/components/DataTable.vue';
 
-import { Getter } from 'vuex-class';
+import { Getter, Mutation } from 'vuex-class';
 import { DateTime } from 'luxon';
 
 function defaultFilters(): Filters {
@@ -89,33 +107,11 @@ export default class Home extends Vue {
 
   @Getter('perPage') perPage!: number;
 
-  @Watch('filters.by')
+  @Mutation('export') exportData!: (toExport: string[]) => void;
 
-  onChangeSearch(oldVal: string, newVal: string) {
-    if (oldVal !== newVal && this.filters.text !== '') {
-      this.onSearch();
-    }
-  }
+  @Mutation('searchBy') searchBy!: (searchParams: SearchBy) => void;
 
-  @Watch('filters.dateRange', { deep: true })
-
-  onChangeDate(newVal: FilterRange, { start, end }: FilterRange) {
-    const startDate = DateTime.fromString(newVal.start, 'yyyy-dd-mm');
-    const endDate = DateTime.fromString(newVal.end, 'yyyy-dd-mm');
-    if (startDate.isValid && endDate.isValid) {
-      this.$store.commit('searchBy', { by: 'Date', range: { start: startDate.toISODate(), end: endDate.toISODate() } });
-    }
-  }
-
-  @Watch('filters.amountRange', { deep: true })
-
-  onChangeAmount(newVal: FilterRange, { start, end }: FilterRange) {
-    const startNumber = parseFloat(newVal.start);
-    const endNumber = parseFloat(newVal.end);
-    if (!Number.isNaN(startNumber) && !Number.isNaN(endNumber) && !this.filters.changed) {
-      this.$store.commit('searchBy', { by: 'Amount', range: { start: startNumber, end: endNumber } });
-    }
-  }
+  @Mutation('orderData') orderData!: (orderParams: orderByParams) => void;
 
   headers: TableColumn[] = [
     {
@@ -166,8 +162,8 @@ export default class Home extends Vue {
    * @param {string} order - desc or asc
    */
 
-  orderBy(value: string, order: string) {
-    this.$store.commit('orderData', { value, order });
+  orderBy(value: string, order: boolean) {
+    this.orderData({ value, order });
   }
   /**
    * @function onSearch
@@ -177,7 +173,7 @@ export default class Home extends Vue {
 
   onSearch() {
     const { by, text } = this.filters;
-    this.$store.commit('searchBy', { by, text });
+    this.searchBy({ by, text });
   }
 
   /**
@@ -203,5 +199,33 @@ export default class Home extends Vue {
    * @description checks if
    */
   hasRange = (range: FilterRange) => (range.start || range.end);
+
+  @Watch('filters.by')
+
+  onChangeSearch(oldVal: string, newVal: string) {
+    if (oldVal !== newVal && this.filters.text !== '') {
+      this.onSearch();
+    }
+  }
+
+  @Watch('filters.dateRange', { deep: true })
+
+  onChangeDate(newVal: FilterRange, { start, end }: FilterRange) {
+    const startDate = DateTime.fromString(newVal.start, 'yyyy-dd-mm');
+    const endDate = DateTime.fromString(newVal.end, 'yyyy-dd-mm');
+    if (startDate.isValid && endDate.isValid) {
+      this.searchBy({ by: 'Date', range: { start: startDate.toISODate(), end: endDate.toISODate() } });
+    }
+  }
+
+  @Watch('filters.amountRange', { deep: true })
+
+  onChangeAmount(newVal: FilterRange, { start, end }: FilterRange) {
+    const startNumber = parseFloat(newVal.start);
+    const endNumber = parseFloat(newVal.end);
+    if (!Number.isNaN(startNumber) && !Number.isNaN(endNumber) && !this.filters.changed) {
+      this.searchBy({ by: 'Amount', range: { start: startNumber, end: endNumber } });
+    }
+  }
 }
 </script>

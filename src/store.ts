@@ -8,6 +8,7 @@ import {
   key,
   numberRange,
   paginateData,
+  exportFile,
 } from '@/utils';
 
 Vue.use(Vuex);
@@ -49,7 +50,7 @@ export default new Vuex.Store<AppState>({
       state.data.paginated = paginateData(orderedRecords, state.data.page, state.data.perPage);
     },
     /**
-     * @description loads new array of records depending on the requested page
+     * @description load new array of records depending on the requested page
      * @param state
      * @param page
      */
@@ -72,7 +73,7 @@ export default new Vuex.Store<AppState>({
         if (range) {
           return parseValue(value, by) > range.start && parseValue(value, by) < range.end;
         }
-        return value[by].toLowerCase().includes(text.toLowerCase());
+        return value[by].toLowerCase().includes(text!.toLowerCase());
       });
       state.isFilterActive = true;
       state.data = {
@@ -87,10 +88,16 @@ export default new Vuex.Store<AppState>({
      * @param state
      */
     clearFilters(state: AppState) {
-      state.isFilterActive = false;
-      state.data.filteredRecords = [];
-      state.data.pages = numberRange(state.data.records.length, 10);
-      state.data.paginated = paginateData(state.data.records, state.data.page, state.data.perPage);
+      state = {
+        ...state,
+        isFilterActive: false,
+        data: {
+          ...state.data,
+          filteredRecords: [],
+          pages: numberRange(state.data.records.length, 10),
+          paginated: paginateData(state.data.records, state.data.page, state.data.perPage),
+        },
+      };
     },
     /**
      * Updates record value based on property of updatedData
@@ -104,6 +111,12 @@ export default new Vuex.Store<AppState>({
         const index = records.indexOf(record);
         state.data.records[index] = { ...record, [updatedData.property]: updatedData.newVal };
       }
+    },
+    export(state: AppState, toExport: string[]) {
+      const records: DataRecord[] = state.data.records.filter(
+        (record: DataRecord) => toExport.includes(record.ID),
+      );
+      exportFile(records);
     },
   },
   getters: {

@@ -46,6 +46,7 @@
         :perPage="pagination.perPage"
       />
     </slot>
+    <slot name="actions" :selectedIds="selectedIds" />
   </div>
 </template>
 <script lang="ts">
@@ -84,7 +85,6 @@ export default class DataTable extends Vue {
   onPageChange(newVal: number, oldPage: number) {
     if (newVal !== oldPage) {
       this.allSelected = false;
-      this.selectedIds = [];
     }
   }
 
@@ -107,11 +107,11 @@ export default class DataTable extends Vue {
 
   select(id: string) {
     const exists = this.data.find((record: DataRecord) => record.ID === id);
-    if (exists && !this.selectedIds.includes(id)) {
+    if (!this.selectedIds.includes(id)) {
       this.selectedIds.push(id);
-    } else if (exists && this.selectedIds.includes(id)) {
+    } else {
       const index = this.selectedIds.indexOf(id);
-      delete this.selectedIds[index];
+      this.selectedIds.splice(index, 1);
     }
   }
 

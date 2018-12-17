@@ -6,6 +6,6 @@ declare interface AppState {
 
 declare interface SearchBy {
   by: string;
-  text: string;
+  text?: string;
   range?: FilterRange;
 }
