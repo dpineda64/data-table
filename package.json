@@ -17,7 +17,7 @@
     "csvtojson": "^2.0.8",
     "dotenv": "^6.2.0",
     "express": "^4.16.4",
-    "lodash-es": "^4.17.11",
+    "lodash-es": "^4.17.21",
     "luxon": "^1.8.2",
     "serve-static": "^1.13.2",
     "vue": "^2.5.17",
