@@ -16,7 +16,7 @@
     "csv": "^5.0.0",
     "csvtojson": "^2.0.8",
     "dotenv": "^6.2.0",
-    "express": "^4.16.4",
+    "express": "^4.17.3",
     "lodash-es": "^4.17.11",
     "luxon": "^1.8.2",
     "serve-static": "^1.13.2",
